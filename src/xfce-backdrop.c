@@ -171,14 +171,14 @@ create_solid(GdkColor *color,
 {
     GdkPixbuf *pix;
     guint32 rgba;
-    
+
     pix = gdk_pixbuf_new(GDK_COLORSPACE_RGB, has_alpha, 8, width, height);
-    
+
     rgba = ((((color->red & 0xff00) << 8) | ((color->green & 0xff00))
             | ((color->blue & 0xff00) >> 8)) << 8) | alpha;
-    
+
     gdk_pixbuf_fill(pix, rgba);
-    
+
     return pix;
 }
 
@@ -191,12 +191,12 @@ create_gradient(GdkColor *color1, GdkColor *color2, gint width, gint height,
     GdkPixdata pixdata;
     guint8 rgb[3];
     GError *err = NULL;
-    
+
     g_return_val_if_fail(color1 != NULL && color2 != NULL, NULL);
     g_return_val_if_fail(width > 0 && height > 0, NULL);
     g_return_val_if_fail(style == XFCE_BACKDROP_COLOR_HORIZ_GRADIENT
             || style == XFCE_BACKDROP_COLOR_VERT_GRADIENT, NULL);
-    
+
     pixdata.magic = GDK_PIXBUF_MAGIC_NUMBER;
     pixdata.length = GDK_PIXDATA_HEADER_LENGTH + (width * height * 3);
     pixdata.pixdata_type = GDK_PIXDATA_COLOR_TYPE_RGB
@@ -213,7 +213,7 @@ create_gradient(GdkColor *color1, GdkColor *color2, gint width, gint height,
             rgb[2] = (color1->blue + (i * (color2->blue - color1->blue) / width)) >> 8;
             memcpy(pixdata.pixel_data+(i*3), rgb, 3);
         }
-        
+
         for(i = 1; i < height; i++) {
             memcpy(pixdata.pixel_data+(i*pixdata.rowstride),
                     pixdata.pixel_data, pixdata.rowstride);
@@ -229,16 +229,16 @@ create_gradient(GdkColor *color1, GdkColor *color2, gint width, gint height,
                 memcpy(pixdata.pixel_data+(i*pixdata.rowstride)+(j*3), rgb, 3);
         }
     }
-    
+
     pix = gdk_pixbuf_from_pixdata(&pixdata, TRUE, &err);
     if(!pix) {
         g_warning("%s: Unable to create color gradient: %s\n", PACKAGE,
                 err->message);
         g_error_free(err);
     }
-    
+
     g_free(pixdata.pixel_data);
-    
+
     return pix;
 }
 
@@ -664,13 +664,13 @@ static void
 xfce_backdrop_class_init(XfceBackdropClass *klass)
 {
     GObjectClass *gobject_class = (GObjectClass *)klass;
-    
+
     g_type_class_add_private(klass, sizeof(XfceBackdropPriv));
-    
+
     gobject_class->finalize = xfce_backdrop_finalize;
     gobject_class->set_property = xfce_backdrop_set_property;
     gobject_class->get_property = xfce_backdrop_get_property;
-    
+
     backdrop_signals[BACKDROP_CHANGED] = g_signal_new("changed",
             G_OBJECT_CLASS_TYPE(gobject_class), G_SIGNAL_RUN_FIRST,
             G_STRUCT_OFFSET(XfceBackdropClass, changed), NULL, NULL,
@@ -745,7 +745,7 @@ xfce_backdrop_class_init(XfceBackdropClass *klass)
                                                       "backdrop-cycle-period",
                                                       "backdrop-cycle-period",
                                                       XFCE_TYPE_BACKDROP_CYCLE_PERIOD,
-                                                      XFCE_BACKDROP_PERIOD_MINUES,
+                                                      XFCE_BACKDROP_PERIOD_MINUTES,
                                                       XFDESKTOP_PARAM_FLAGS));
 
     g_object_class_install_property(gobject_class, PROP_BACKDROP_CYCLE_TIMER,
@@ -785,9 +785,9 @@ static void
 xfce_backdrop_finalize(GObject *object)
 {
     XfceBackdrop *backdrop = XFCE_BACKDROP(object);
-    
+
     g_return_if_fail(backdrop != NULL);
-    
+
     if(backdrop->priv->image_path)
         g_free(backdrop->priv->image_path);
 
@@ -935,12 +935,12 @@ XfceBackdrop *
 xfce_backdrop_new(GdkVisual *visual)
 {
     XfceBackdrop *backdrop;
-    
+
     g_return_val_if_fail(GDK_IS_VISUAL(visual), NULL);
-    
+
     backdrop = g_object_new(XFCE_TYPE_BACKDROP, NULL);
     backdrop->priv->bpp = gdk_visual_get_depth(visual);
-    
+
     return backdrop;
 }
 
@@ -959,11 +959,11 @@ xfce_backdrop_new_with_size(GdkVisual *visual,
                             gint height)
 {
     XfceBackdrop *backdrop;
-    
+
     g_return_val_if_fail(GDK_IS_VISUAL(visual), NULL);
-    
+
     backdrop = g_object_new(XFCE_TYPE_BACKDROP, NULL);
-    
+
     backdrop->priv->bpp = gdk_visual_get_depth(visual);
     backdrop->priv->width = width;
     backdrop->priv->height = height;
@@ -1039,7 +1039,7 @@ xfce_backdrop_set_first_color(XfceBackdrop *backdrop,
                               const GdkColor *color)
 {
     g_return_if_fail(XFCE_IS_BACKDROP(backdrop) && color != NULL);
-    
+
     if(color->red != backdrop->priv->color1.red
             || color->green != backdrop->priv->color1.green
             || color->blue != backdrop->priv->color1.blue)
@@ -1057,7 +1057,7 @@ xfce_backdrop_get_first_color(XfceBackdrop *backdrop,
                               GdkColor *color)
 {
     g_return_if_fail(XFCE_IS_BACKDROP(backdrop) && color);
-    
+
     memcpy(color, &backdrop->priv->color1, sizeof(GdkColor));
 }
 
@@ -1076,7 +1076,7 @@ xfce_backdrop_set_second_color(XfceBackdrop *backdrop,
                                const GdkColor *color)
 {
     g_return_if_fail(XFCE_IS_BACKDROP(backdrop) && color != NULL);
-    
+
     if(color->red != backdrop->priv->color2.red
             || color->green != backdrop->priv->color2.green
             || color->blue != backdrop->priv->color2.blue)
@@ -1095,7 +1095,7 @@ xfce_backdrop_get_second_color(XfceBackdrop *backdrop,
                                GdkColor *color)
 {
     g_return_if_fail(XFCE_IS_BACKDROP(backdrop) && color);
-    
+
     memcpy(color, &backdrop->priv->color2, sizeof(GdkColor));
 }
 
@@ -1114,7 +1114,7 @@ xfce_backdrop_set_image_style(XfceBackdrop *backdrop,
                               XfceBackdropImageStyle style)
 {
     g_return_if_fail(XFCE_IS_BACKDROP(backdrop));
-    
+
     if(style != backdrop->priv->image_style) {
         xfce_backdrop_clear_cached_image(backdrop);
         backdrop->priv->image_style = style;
@@ -1176,7 +1176,7 @@ xfce_backdrop_set_image_filename(XfceBackdrop *backdrop, const gchar *filename)
 
     /* Now we can free the old path and setup the new one */
     g_free(backdrop->priv->image_path);
-    
+
     if(filename)
         backdrop->priv->image_path = g_strdup(filename);
     else
@@ -1295,10 +1295,10 @@ xfce_backdrop_timer(XfceBackdrop *backdrop)
         /* remove old timer first */
         xfce_backdrop_remove_backdrop_timer(backdrop);
 
-        XF_DEBUG("calling g_timeout_add_seconds, interval is %d", cycle_interval);
-        backdrop->priv->cycle_timer_id = g_timeout_add_seconds(cycle_interval,
-                                                               (GSourceFunc)xfce_backdrop_timer,
-                                                               backdrop);
+        XF_DEBUG("calling g_timeout_add, interval is %d", cycle_interval);
+        backdrop->priv->cycle_timer_id = g_timeout_add(cycle_interval,
+                                                       (GSourceFunc)xfce_backdrop_timer,
+                                                       backdrop);
 
         if(local_time != NULL)
             g_date_time_unref(local_time);
@@ -1344,16 +1344,20 @@ xfce_backdrop_set_cycle_timer(XfceBackdrop *backdrop, guint cycle_timer)
 
     if(backdrop->priv->cycle_timer != 0 && backdrop->priv->cycle_backdrop == TRUE) {
         switch(backdrop->priv->cycle_period) {
-            case XFCE_BACKDROP_PERIOD_SECONDS:
+            case XFCE_BACKDROP_PERIOD_MILLISECONDS:
                 cycle_interval = backdrop->priv->cycle_timer;
                 break;
 
-            case XFCE_BACKDROP_PERIOD_MINUES:
-                cycle_interval = backdrop->priv->cycle_timer * 60;
+            case XFCE_BACKDROP_PERIOD_SECONDS:
+                cycle_interval = backdrop->priv->cycle_timer * 1000;
+                break;
+
+            case XFCE_BACKDROP_PERIOD_MINUTES:
+                cycle_interval = backdrop->priv->cycle_timer * 60 * 1000;
                 break;
 
             case XFCE_BACKDROP_PERIOD_HOURS:
-                cycle_interval = backdrop->priv->cycle_timer * 60 * 60;
+                cycle_interval = backdrop->priv->cycle_timer * 60 * 60 * 1000;
                 break;
 
             case XFCE_BACKDROP_PERIOD_CHRONOLOGICAL:
@@ -1369,6 +1373,7 @@ xfce_backdrop_set_cycle_timer(XfceBackdrop *backdrop, guint cycle_timer)
 
                 /* find out how long until the next hour so we cycle on the hour */
                 cycle_interval = ((59 - minute) * 60) + (60 - second);
+                cycle_interval = cycle_interval * 1000;
                 break;
 
             case XFCE_BACKDROP_PERIOD_DAILY:
@@ -1379,6 +1384,7 @@ xfce_backdrop_set_cycle_timer(XfceBackdrop *backdrop, guint cycle_timer)
 
                 /* find out how long until the next day so we cycle on the day */
                 cycle_interval = ((23 - hour) * 60 * 60) + ((59 - minute) * 60) + (60 - second);
+                cycle_interval = cycle_interval * 1000;
                 break;
 
             default:
@@ -1387,10 +1393,10 @@ xfce_backdrop_set_cycle_timer(XfceBackdrop *backdrop, guint cycle_timer)
             }
 
         if(cycle_interval != 0) {
-            XF_DEBUG("calling g_timeout_add_seconds, interval is %d", cycle_interval);
-            backdrop->priv->cycle_timer_id = g_timeout_add_seconds(cycle_interval,
-                                                                   (GSourceFunc)xfce_backdrop_timer,
-                                                                   backdrop);
+            XF_DEBUG("calling g_timeout_add, interval is %d", cycle_interval);
+            backdrop->priv->cycle_timer_id = g_timeout_add(cycle_interval,
+                                                           (GSourceFunc)xfce_backdrop_timer,
+                                                           backdrop);
         }
     }
 
@@ -1779,14 +1785,14 @@ xfce_backdrop_loader_closed_cb(GdkPixbufLoader *loader,
         w = backdrop->priv->width;
         h = backdrop->priv->height;
     }
-    
+
     istyle = backdrop->priv->image_style;
-    
+
     /* if the image is the same as the screen size, there's no reason to do
      * any scaling at all */
     if(w == iw && h == ih)
         istyle = XFCE_BACKDROP_IMAGE_CENTERED;
-    
+
     /* if we don't need to do any scaling, don't do any interpolation.  this
      * fixes a problem where hyper/bilinear filtering causes blurriness in
      * some images.  http://bugzilla.xfce.org/show_bug.cgi?id=2939 */
@@ -1828,7 +1834,7 @@ xfce_backdrop_loader_closed_cb(GdkPixbufLoader *loader,
                     MIN(w, iw), MIN(h, ih), xo, yo, 1.0, 1.0,
                     interp, 255);
             break;
-        
+
         case XFCE_BACKDROP_IMAGE_TILED:
             tmp = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, w, h);
             /* Now that the image has been loaded, recalculate the image
@@ -1841,7 +1847,7 @@ xfce_backdrop_loader_closed_cb(GdkPixbufLoader *loader,
                 for(j = 0; (j * ih) < h; j++) {
                     gint newx = iw * i, newy = ih * j;
                     gint neww = iw, newh = ih;
-                    
+
                     if((newx + neww) > w)
                         neww = w - newx;
                     if((newy + newh) > h)
@@ -1851,17 +1857,17 @@ xfce_backdrop_loader_closed_cb(GdkPixbufLoader *loader,
                             neww, newh, tmp, newx, newy);
                 }
             }
-            
+
             gdk_pixbuf_composite(tmp, final_image, 0, 0, w, h,
                     0, 0, 1.0, 1.0, interp, 255);
             g_object_unref(G_OBJECT(tmp));
             break;
-        
+
         case XFCE_BACKDROP_IMAGE_STRETCHED:
             gdk_pixbuf_composite(image, final_image, 0, 0, w, h,
                     0, 0, 1, 1, interp, 255);
             break;
-        
+
         case XFCE_BACKDROP_IMAGE_SCALED:
             xscale = (gdouble)w / iw;
             yscale = (gdouble)h / ih;
@@ -1881,7 +1887,7 @@ xfce_backdrop_loader_closed_cb(GdkPixbufLoader *loader,
                     iw * xscale, ih * yscale, xo, yo, 1, 1,
                     interp, 255);
             break;
-        
+
         case XFCE_BACKDROP_IMAGE_ZOOMED:
         case XFCE_BACKDROP_IMAGE_SPANNING_SCREENS:
             xscale = (gdouble)w / iw;
@@ -1899,7 +1905,7 @@ xfce_backdrop_loader_closed_cb(GdkPixbufLoader *loader,
             gdk_pixbuf_composite(image, final_image, 0, 0,
                     w, h, xo, yo, 1, 1, interp, 255);
             break;
-        
+
         default:
             g_critical("Invalid image style: %d\n", (gint)istyle);
     }

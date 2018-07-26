@@ -62,8 +62,9 @@ typedef enum
 typedef enum
 {
     XFCE_BACKDROP_PERIOD_INVALID = -1,
-    XFCE_BACKDROP_PERIOD_SECONDS = 0,
-    XFCE_BACKDROP_PERIOD_MINUES,
+    XFCE_BACKDROP_PERIOD_MILLISECONDS = 0,
+    XFCE_BACKDROP_PERIOD_SECONDS,
+    XFCE_BACKDROP_PERIOD_MINUTES,
     XFCE_BACKDROP_PERIOD_HOURS,
     XFCE_BACKDROP_PERIOD_STARTUP,
     XFCE_BACKDROP_PERIOD_HOURLY,
@@ -74,7 +75,7 @@ typedef enum
 struct _XfceBackdrop
 {
     GObject gobject;
-    
+
     /*< private >*/
     XfceBackdropPriv *priv;
 };
@@ -82,7 +83,7 @@ struct _XfceBackdrop
 struct _XfceBackdropClass
 {
     GObjectClass parent_class;
-    
+
     /*< signals >*/
     void (*changed)(XfceBackdrop *backdrop);
     void (*cycle)(XfceBackdrop *backdrop);
